@@ -1,15 +1,32 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
   response.json(blogs);
 });
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body);
+  let { user } = request;
+
+  if (!user) {
+    return response.sendStatus(401);
+  }
+
+  const { title, likes, url, author } = request.body;
+
+  const blog = new Blog({
+    title,
+    likes,
+    url,
+    author,
+    user: user._id
+  });
 
   const result = await blog.save();
+  user.blogs = user.blogs.concat(result._id);
+  await user.save();
   response.status(201).json(result);
 });
 
@@ -26,8 +43,16 @@ blogsRouter.put('/:id', async (request, response) => {
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
+  const { user } = request;
   const { id } = request.params;
-  await Blog.findByIdAndDelete(id);
+  const blog = await Blog.findById(id).populate('user');
+  if (!blog) {
+    return response.sendStatus(404);
+  }
+  if (!user || user._id.toString() !== blog.user._id.toString()) {
+    return response.sendStatus(401);
+  }
+  await blog.remove();
   return response.sendStatus(204);
 });
 

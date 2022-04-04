@@ -1,4 +1,4 @@
-var collection = require("lodash/collection");
+let collection = require('lodash/collection');
 
 const dummy = (blogs) => {
   return 1;
@@ -19,8 +19,8 @@ const mostBlogs = (blogs) => {
   if (!blogs.length) {
     return null;
   }
-  const counts = collection.countBy(blogs, "author");
-  return getMaxKey(counts, "author", "blogs");
+  const counts = collection.countBy(blogs, 'author');
+  return getMaxKey(counts, 'author', 'blogs');
 };
 
 const mostLikes = (blogs) => {
@@ -33,7 +33,7 @@ const mostLikes = (blogs) => {
       ? blog.likes
       : likeCounts[blog.author] + blog.likes;
   });
-  return getMaxKey(likeCounts, "author", "likes");
+  return getMaxKey(likeCounts, 'author', 'likes');
 };
 
 const getMaxKey = (arr, keyName, valueName) => {
@@ -49,5 +49,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
-  mostLikes,
+  mostLikes
 };
