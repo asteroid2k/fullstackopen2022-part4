@@ -50,7 +50,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response.sendStatus(404);
   }
   if (!user || user._id.toString() !== blog.user._id.toString()) {
-    return response.sendStatus(401);
+    return response.sendStatus(401).json({ error: 'Must be author' });
   }
   await blog.remove();
   return response.sendStatus(204);
