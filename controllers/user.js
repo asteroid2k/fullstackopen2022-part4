@@ -11,6 +11,17 @@ usersRouter.get('/', async (request, response) => {
   response.json(users);
 });
 
+usersRouter.get('/:username', async (request, response) => {
+  const user = await User.findOne({
+    username: request.params.username
+  }).populate('blogs', {
+    title: 1,
+    url: 1,
+    likes: 1
+  });
+  response.json(user);
+});
+
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body;
   const passwordVal = password && password.length >= 3;
