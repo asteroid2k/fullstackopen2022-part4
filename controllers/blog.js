@@ -38,7 +38,7 @@ blogsRouter.put('/:id', async (request, response) => {
     {
       new: true
     }
-  );
+  ).populate('user');
   response.status(200).json(blog);
 });
 
